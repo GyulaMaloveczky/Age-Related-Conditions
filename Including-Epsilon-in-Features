@@ -1,0 +1,36 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+greeks =  pd.read_csv('greeks.csv', index_col = 0)
+
+train =  pd.read_csv('train.csv', index_col = 0)
+
+
+
+greeks['Epsilon']= greeks['Epsilon'].replace('Unknown', np.nan)
+
+
+def convert_date(date):
+    try:
+        return pd.to_datetime(date, format='%d.%m.%y')
+    except:
+        return pd.to_datetime(date, format='%m/%d/%Y')
+
+# Sample data in a DataFrame
+
+
+# Apply the custom function to the 'dates' column
+greeks['Epsilon'] = greeks['Epsilon'].apply(convert_date)
+
+greeks['Epsilon'] = (greeks['Epsilon'] - greeks['Epsilon'].min()).dt.total_seconds().fillna(pd.NA)
+
+
+
+# Number of NaN values
+
+
+
+X = train
+X = X.join(greeks['Epsilon'], how='left')
+
+print(X.head())
